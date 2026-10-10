@@ -15,9 +15,9 @@ jobs:
             echo "Zip encontrado: $ZIP"
             unzip -q "$ZIP" -d project
           fi
-          SETTINGS=$(find . -name "settings.gradle.kts" -not -path "*__MACOSX*" | head -n 1)
+          SETTINGS=$(find . \( -name "settings.gradle" -o -name "settings.gradle.kts" \) -not -path "*__MACOSX*" -not -path "./.git/*" | head -n 1)
           if [ -z "$SETTINGS" ]; then
-            echo "No encontre settings.gradle.kts. Revisa que el zip este en el repositorio."
+            echo "No encontre settings.gradle ni settings.gradle.kts"
             exit 1
           fi
           echo "ROOT=$(dirname "$SETTINGS")" >> $GITHUB_ENV
@@ -33,6 +33,7 @@ jobs:
         working-directory: ${{ env.ROOT }}
       - uses: actions/upload-artifact@v4
         with:
-          name: iLauncher-apk
+          name: modern-wars-apk
           path: ${{ env.ROOT }}/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
           
